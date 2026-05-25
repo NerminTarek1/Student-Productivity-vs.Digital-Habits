@@ -1,0 +1,177 @@
+﻿use [StudentProductivity DB]
+
+--========================================
+--1_Productivity Distribution by Caffeine:
+--========================================
+
+SELECT 
+    Caffiene_Category,
+    CAST(AVG(productivity_score) AS DECIMAL(10,2)) as avg_prod,
+    CAST(AVG(focus_score) AS DECIMAL(10,2)) as avg_focus,
+    COUNT(*) as student_count
+FROM [dbo].[Student Performance LAST Version]
+GROUP BY Caffiene_Category;
+
+
+-- Non Consumers turn out to have the highest average productivity 
+/* NOTE: Correlation ≠ Causation
+   Higher productivity in Non-Consumers may reflect lifestyle discipline
+   rather than caffeine absence being the direct cause. */
+
+
+-- =====================================================================
+-- 2_Study Intensity and Academic Efficiency for Non-Caffeine Consumers:
+-- =====================================================================
+
+SELECT 
+    Study_Level,
+    CAST(AVG(study_hours_per_day) AS DECIMAL(10,2)) AS Avg_Study_Hrs,
+    Focus_level,
+    Stress_category,
+    CAST(AVG(focus_score) AS DECIMAL(10,2)) AS Avg_Focus_Score,
+    CAST(AVG(productivity_score) AS DECIMAL(10,2)) AS Avg_Prod,
+    CAST(AVG(final_grade) AS DECIMAL(10,2)) AS Avg_Grade,
+    COUNT(*) AS Student_Count
+FROM [dbo].[Student Performance LAST Version]
+WHERE Caffiene_Category = 'Non consumer'
+GROUP BY Study_Level, Focus_level, Stress_category
+ORDER BY Avg_Study_Hrs DESC;
+
+
+/*SCIENTIFIC CONCLUSION: 
+The Yerkes-Dodson Phenomenon (Stress vs. Performance):
+- OBSERVATION: A segment of 'Non-Caffeine Consumers' in the 'Burnout' category 
+  achieves elite grades (93+) despite high psychological pressure.
+- SCIENTIFIC EXPLANATION: This aligns with the 'Yerkes-Dodson Law', where 
+  optimal stress levels (Eustress) act as a catalyst for "Hyper-Focus." 
+- INSIGHT: In these cases, the brain enters a 'Survival Mode' that maximizes 
+  information retention and focus efficiency to overcome the time/pressure 
+  constraint, leading to peak academic ROI despite the mental cost.
+*/
+
+
+-- ==================================================================
+-- 3_Aggregate report:Academic Efficiency for Non-Caffeine Consumers:
+-- ==================================================================
+
+SELECT 
+    Study_Level,
+    COUNT(student_id) AS Total_Students,
+    CAST(AVG(study_hours_per_day) AS DECIMAL(10,2)) AS Avg_Study_Hrs,
+    CAST(AVG(focus_score) AS DECIMAL(10,2)) AS Global_Avg_Focus,
+    CAST(AVG(productivity_score) AS DECIMAL(10,2)) AS Global_Avg_Prod,
+    CAST(AVG(final_grade) AS DECIMAL(10,2)) AS Global_Avg_Grade
+FROM [dbo].[Student Performance LAST Version]
+WHERE coffee_intake_mg = 0 
+GROUP BY Study_Level
+ORDER BY Global_Avg_Grade DESC;
+
+/* Conclusion: 
+Increasing study hours for non-caffeine consumers does NOT guarantee higher grades.
+*/
+
+
+-- =========================================================
+-- 4_Comparison of Top 5 vs Bottom 5 Non-Caffeine Consumers: 
+-- =========================================================
+
+WITH TopPerformers AS (
+    SELECT TOP 5 
+        'Top Productive' AS Category, 
+        student_id, 
+        CAST(productivity_score AS DECIMAL(10,2)) AS Productivity, 
+        CAST(final_grade AS DECIMAL(10,2)) AS Grade, 
+        CAST(sleep_hours AS DECIMAL(10,2)) AS Sleep, 
+        CAST(phone_usage_hours AS DECIMAL(10,2)) AS Phone, 
+        CAST(focus_score AS DECIMAL(10,2)) AS Focus
+    FROM [dbo].[Student Performance LAST Version]
+    WHERE Caffiene_Category = 'Non consumer'
+    ORDER BY productivity_score DESC
+),
+BottomPerformers AS (
+    SELECT TOP 5 
+        'Lowest Productive' AS Category, 
+        student_id, 
+        CAST(productivity_score AS DECIMAL(10,2)) AS Productivity, 
+        CAST(final_grade AS DECIMAL(10,2)) AS Grade, 
+        CAST(sleep_hours AS DECIMAL(10,2)) AS Sleep, 
+        CAST(phone_usage_hours AS DECIMAL(10,2)) AS Phone, 
+        CAST(focus_score AS DECIMAL(10,2)) AS Focus
+    FROM [dbo].[Student Performance LAST Version]
+    WHERE Caffiene_Category = 'Non consumer'
+    ORDER BY productivity_score ASC
+)
+
+SELECT * FROM TopPerformers
+UNION ALL
+SELECT * FROM BottomPerformers;
+
+/* CONCLUSION:
+-- 1. THE SLEEP-PRODUCTIVITY LINK:
+--    Top productive students prioritize sleep, averaging > 9 hours. 
+--    Lowest productive students suffer from severe sleep deprivation (as low as 3.17h).
+
+-- 2. THE SMARTPHONE IMPACT:
+--    High phone usage appears to be strongly associated with reduced productivity levels.
+--    Top performers maintain strict limits on phone usage (mostly 1-4 hours).
+
+-- 3. PRODUCTIVITY VS. GRADES PARADOX:
+--    High productivity (task completion) does not always guarantee high grades (e.g., Student 15195).
+--    This suggests that some students are "busy" but not necessarily "studying effectively" for exams.
+
+-- 4. THE FOCUS FACTOR:
+--    Focus scores stay above 70 in the Top category, while they drop to 32 in the Lowest category,
+--    directly correlating with phone distractions and lack of rest.
+*/
+
+
+-- ===============================================
+-- Investigating the Root Cause for Student 15195: 
+-- ===============================================
+
+SELECT 
+    student_id,
+    Study_Level,
+    Stress_category,
+    Primary_distraction_source, 
+    Distraction_ratio_level,    
+    Attendancee_level,       
+    Assignment_completed_level, 
+    CAST(Productivity_gap AS DECIMAL(10,2)) AS Prod_Gap
+FROM [dbo].[Student Performance LAST Version]
+WHERE student_id = 15195;
+
+
+
+/* CONCLUSION: The Productivity Paradox
+The analysis suggests that high productivity metrics alone may not guarantee
+strong academic outcomes. In the case of student 15195, factors such as
+social media distractions, elevated stress levels, and inconsistent attendance
+appear to reduce the effectiveness of study efforts, creating a pattern of
+"False Productivity."
+*/
+
+
+
+/* ===================================================================
+RECOMMENDATIONS FOR NON-CAFFEINE CONSUMERS & THE PRODUCTIVITY PARADOX:
+======================================================================
+1. FIXING FALSE PRODUCTIVITY (e.g., Student 15195):
+   - Shift to Active Learning: Transition from passive task completion to Active Recall 
+     and Mock Exams to bridge the gap between "being busy" and "exam readiness."
+   - Attendance Enforcement: Implement early academic alerts to improve attendance, 
+     as classroom absence neutralizes high assignment submission rates.
+   - Micro-Distraction Blocks: Utilize strict website/app blockers specifically during 
+     study sessions to eliminate hidden Social Media leakage.
+
+2. COUNTERING COGNITIVE FATIGUE (Intensive Study Crash):
+   - Mandatory Spacing: Since these students lack caffeine stimulation, they must avoid 
+     continuous cramming. Enforce the Spaced Repetition method (45m study / 15m physical break).
+   - Optimize Study Volume: Restrict total study hours when they cross the fatigue 
+     threshold, prioritizing high-quality, focused sessions over exhausting duration.
+
+CONCLUSION: High task completion is an illusion if attendance is low and focus is 
+fragmented. For non-caffeine users, cognitive rest and active testing are the ultimate 
+drivers of real academic ROI.
+==================================================================================================
+*/

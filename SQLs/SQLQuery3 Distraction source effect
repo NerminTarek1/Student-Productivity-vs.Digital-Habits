@@ -1,0 +1,110 @@
+﻿use [StudentProductivity DB]
+
+--=========================================================
+-- 1_ Primary Distraction Sources vs. Academic Performance:
+--=========================================================
+
+SELECT 
+    Primary_distraction_source,
+    CAST(AVG(final_grade) AS DECIMAL(10,2)) as avg_grade,
+    COUNT(*) as student_count
+FROM [dbo].[Student Performance LAST Version]
+GROUP BY Primary_distraction_source
+ORDER BY avg_grade DESC;
+
+
+/* CONCLUSION: 
+Social Media is the most frequent distraction (10,107 students), 
+followed by YouTube and Gaming. Surprisingly, all three sources 
+result in almost identical average grades (~70), suggesting that 
+the "type" of distraction matters less than the "presence" of the distraction itself. */
+
+--========================================
+-- 2_Attendance Levels vs. Average Grades:
+--========================================
+
+SELECT 
+    Attendancee_level,
+    CAST(AVG(final_grade) AS DECIMAL(10,2)) as avg_grade
+FROM [dbo].[Student Performance LAST Version]
+GROUP BY Attendancee_level
+ORDER BY avg_grade DESC;
+
+
+/* CONCLUSION: 
+The data shows a paradox: students with "Excellent" attendance have 
+slightly lower grades (69.98) than those "At Risk" (70.31). 
+suggesting that attendance alone may not be a sufficient indicator of academic performance or engagement.. */
+
+
+--====================================================
+-- 3_ Early Warning List for Underperforming Students:
+--====================================================
+
+SELECT TOP 10
+    student_id,
+    CAST(final_grade AS DECIMAL(10,2)) AS Grade,
+    CAST(attendance_percentage AS DECIMAL(10,2)) AS Attend_Pct,
+    focus_score,
+    CAST(phone_usage_hours AS DECIMAL(10,2)) AS Phone_Hrs
+FROM [dbo].[Student Performance LAST Version]
+ORDER BY final_grade ASC; 
+
+/* CONCLUSION:
+This list highlights students at high academic risk (Grades <= 40).
+Elevated phone usage and low focus scores appear consistently among
+many underperforming students, regardless of attendance percentage.
+*/
+
+
+
+--=================================================================================
+-- 4_ Testing the Science: Correlation between Stress, Focus,Grades & Productivity:
+--=================================================================================
+
+SELECT 
+    Stress_category, 
+    COUNT(student_id) AS Student_Count,
+    CAST(AVG(final_grade) AS DECIMAL(10,2)) AS Avg_Grade,
+    CAST(AVG(focus_score) AS DECIMAL(10,2)) AS Avg_Focus_Score,
+    CAST(AVG(productivity_score) AS DECIMAL(10,2)) AS Avg_Productivity
+FROM [dbo].[Student Performance LAST Version]
+GROUP BY Stress_category
+ORDER BY Avg_Grade DESC; 
+
+
+/* FINAL INSIGHT:
+THE STRESS-PRODUCTIVITY GAP
+1. PRODUCTIVITY LOSS: Stress kills efficiency. "Burnout" students are 8% less 
+   productive than those in the "Calm Zone" (46% vs 54%).
+2. FOCUS ILLUSION: Focus scores stay flat at 64%, meaning stressed students 
+   THINK they are focusing, but their actual output says otherwise.
+3. SCALE OF RISK: "Burnout" is the largest group (7,950+ students). While grades 
+   are still stable (~70), this group is at high risk of academic collapse.
+
+Conclusion: Stress doesn't hit the grades first—it hits the student's efficiency.
+*/
+
+
+/* ====================================================================================
+RECOMMENDATIONS FOR DISTRACTION SOURCES & STRESS MANAGEMENT:
+====================================================================================
+1. REFORMING CLASSROOM ENGAGEMENT (Countering the Attendance Paradox):
+   - Active Classrooms: Shift from passive lecturing to interactive models (e.g., live 
+     pop-quizzes, discussions) to convert "Excellent Attendance" into actual "Mental Focus."
+   - Phone-Free Zones: Designate lecture halls as digital-free environments to eliminate 
+     the background presence of devices during learning windows.
+
+2. SYSTEMIC STRESS INTERVENTION (Targeting the 7,950+ Burnout Group):
+   - Institutional Support: Establish counseling and time-management workshops to help 
+     the massive Burnout segment recover efficiency before a total academic crash.
+   - Efficiency Awareness: Educate students on the "Focus Illusion," highlighting that 
+     prolonged study under high stress drops real productive output by 8%.
+
+CONCLUSION: Preserving classroom presence is empty without engagement, and protecting 
+academic output requires managing the student's mental bandwidth first.
+====================================================================================
+*/
+
+
+

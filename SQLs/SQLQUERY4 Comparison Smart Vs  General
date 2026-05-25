@@ -1,0 +1,127 @@
+use [StudentProductivity DB]
+
+-- ====================================================
+-- 1_Comparison (Smart Performers vs. General Average):
+-- ====================================================
+-- 1. Smart Performers Average
+
+SELECT 
+    'Smart Performers' AS Student_Group,
+    COUNT(student_id) AS Count,
+    CAST(AVG(final_grade) AS DECIMAL(10,2)) AS Avg_Grade,
+    CAST(AVG(study_hours_per_day) AS DECIMAL(10,2)) AS Avg_Study_Hrs,
+    CAST(AVG(focus_score) AS DECIMAL(10,2)) AS Avg_Focus,
+    CAST(AVG(phone_usage_hours) AS DECIMAL(10,2)) AS Phone_Hrs, 
+    CAST(AVG(distraction_time) AS DECIMAL(10,2)) AS Distraction_Time,
+    CAST(AVG(sleep_hours) AS DECIMAL(10,2)) AS Avg_Sleep,
+    CAST(AVG(exercise_minutes) AS DECIMAL(10,2)) AS Avg_Exercise,
+    CAST(AVG(Breaks_per_day) AS DECIMAL(10,2)) AS Avg_Breaks
+FROM [dbo].[Student Performance LAST Version]
+WHERE final_grade > 85 AND study_hours_per_day < 4
+
+UNION ALL
+
+-- 2. General Population Average
+SELECT 
+    'General Average' AS Student_Group,
+    COUNT(student_id) AS Count,
+    CAST(AVG(final_grade) AS DECIMAL(10,2)) AS Avg_Grade,
+    CAST(AVG(study_hours_per_day) AS DECIMAL(10,2)) AS Avg_Study_Hrs,
+    CAST(AVG(focus_score) AS DECIMAL(10,2)) AS Avg_Focus,
+    CAST(AVG(phone_usage_hours) AS DECIMAL(10,2)) AS Phone_Hrs,
+    CAST(AVG(distraction_time) AS DECIMAL(10,2)) AS Distraction_Time, 
+    CAST(AVG(sleep_hours) AS DECIMAL(10,2)) AS Avg_Sleep,
+    CAST(AVG(exercise_minutes) AS DECIMAL(10,2)) AS Avg_Exercise,
+    CAST(AVG(Breaks_per_day) AS DECIMAL(10,2)) AS Avg_Breaks
+FROM [dbo].[Student Performance LAST Version]
+WHERE NOT (final_grade > 85 AND study_hours_per_day < 4);
+
+/* FINAL EXECUTIVE SUMMARY: 
+THE "WORK SMART" BLUEPRINT
+
+1. EFFICIENCY LEAP: Smart Performers achieve 92%+ grades using 60% LESS study 
+   time than the average student. This suggests that high-intensity focus 
+   outweighs long hours of low-quality studying.
+
+2. THE DISTRACTION MYTH: Surprisingly, high phone usage (~6h) and distraction 
+   time (~10h) do NOT prevent success. Elite students integrate digital life 
+   without letting it bleed into their focused study blocks.
+
+3. LIFESTYLE STABILITY: With identical sleep, exercise, and break patterns, 
+   the data confirms that academic excellence isn't about "doing more" of 
+   everything—it's about the pure quality of the study session itself.
+
+Conclusion: Productivity is about the DEPTH of the work, not the LENGTH of the time.
+*/
+
+-- ==================================================
+-- 2_Mental Strategy: Stress Distribution Comparison:
+-- ==================================================
+
+-- 1. Smart Performers Stress Levels
+SELECT 
+    'Smart Performers' AS Group_Name,
+    Stress_category,
+    COUNT(*) AS Student_Count,
+    CAST(AVG(final_grade) AS DECIMAL(10,2)) AS Avg_Grade,
+    CAST(AVG(focus_score) AS DECIMAL(10,2)) AS Avg_Focus
+FROM [dbo].[Student Performance LAST Version]
+WHERE final_grade > 85 AND study_hours_per_day < 4
+GROUP BY Stress_category
+
+UNION ALL
+
+-- 2. General Average Stress Levels (Top 3 for comparison)
+SELECT 
+    'General Average' AS Group_Name,
+    Stress_category,
+    COUNT(*) AS Student_Count,
+    CAST(AVG(final_grade) AS DECIMAL(10,2)) AS Avg_Grade,
+    CAST(AVG(focus_score) AS DECIMAL(10,2)) AS Avg_Focus
+FROM [dbo].[Student Performance LAST Version]
+WHERE NOT (final_grade > 85 AND study_hours_per_day < 4)
+GROUP BY Stress_category
+ORDER BY Group_Name, Student_Count DESC;
+
+/* FINAL MENTAL HEALTH ANALYSIS: 
+THE STRESS RESILIENCE FACTOR
+
+1. STRESS RESILIENCE: Smart Performers show incredible resilience. Even in 
+   the "Burnout" stage, they maintain 92%+ grades, whereas the general 
+   population's performance drops significantly under the same pressure.
+
+2. THE PRODUCTIVITY DRAIN: While Focus Scores remain stable at 64%, the 
+   earlier analysis suggests that "Burnout" drains actual Productivity (from 54% 
+   down to 46%). Stress doesn't kill focus, it kills the output quality.
+
+3. THE CALM ELITE: The highest academic achievement (92.74) is found in 
+   the "Smart + Calm" group, proving that mental stability is the ultimate 
+   catalyst for academic peak performance.
+
+Conclusion: High performers aren't just smarter; they are more efficient 
+under pressure, though they still pay the price in lost productivity.
+*/ 
+
+
+
+
+/* ===========================================================
+EXECUTIVE RECOMMENDATIONS BASED ON THE "WORK SMART" BLUEPRINT:
+==============================================================
+1. PROMOTING DEEP WORK OVER STUDY VOLUME:
+   - Institutional Training: Launch "Study Smart" campaigns teaching cognitive tactics 
+     like Active Recall and High-Intensity Interval Studying to reduce low-quality study hours.
+   - Focus Mastery: Train students on "Compartmentalization"—the skill of shielding study 
+     blocks from digital interference, rather than enforcing unrealistic total phone bans.
+
+2. PROTECTING THE ELITE FROM COGNITIVE CRASH:
+   - Safeguarding Mental Capital: Since the highest academic performance (92.74) is locked 
+     within the "Smart + Calm" zone, universities must offer stress-relief programs.
+   - Burnout Prevention: Actively screen top-performing students for high stress levels, 
+     as burnout silently eats 8% of their actual productive output before touching grades.
+
+CONCLUSION: Academic brilliance is defined by the DEPTH of focus, not the LENGTH of time. 
+True educational strategy should focus on optimizing mental efficiency, not filling hours.
+====================================================================================
+*/
+
