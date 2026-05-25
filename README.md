@@ -1,6 +1,7 @@
 # Student-Productivity vs. Digital Habits
 
-Dataset: https://www.kaggle.com/datasets/sehaj1104/student-productivity-and-digital-distraction-dataset 
+Dataset: https://www.kaggle.com/datasets/sehaj1104/student-productivity-and-digital-distraction-dataset
+
 Project Overview
 
 This project investigates the relationship between students' digital habits — including social media usage, phone screen time, YouTube consumption, and gaming — and their overall academic productivity. Using a dataset of 20,000 student records with 18 features, The project investigates how these behavioral factors interact and influence student productivity.
